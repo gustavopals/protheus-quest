@@ -1,529 +1,313 @@
-Sua ideia é **excelente**, porque mistura três coisas que funcionam muito bem juntas:
+# chat-game-ideia.md - Design do jogo Protheus Quest
 
-1. **Gamificação de conhecimento técnico**
-2. **Simulação de um ERP complexo**
-3. **Aprendizado progressivo por desafios**
+Guia de design para um jogo divertido, simples de desenvolver e com forte aprendizado tecnico.
+Complementa o [CODEX.MD](/opt/protheus-quest/CODEX.MD) com foco em gameplay, narrativa e desafios.
 
-E no caso do **TOTVS Protheus**, isso faz muito sentido porque o ERP tem:
+## 1. Norte do jogo
 
-* arquitetura complexa
-* muitos módulos interligados
-* regras de negócio fortes
-* customização via **ADVPL / TL++ / SQL / Configurações**
+## 1.1 Objetivo central
 
-Ou seja, dá para transformar isso facilmente em um **jogo de estratégia/gestão técnica**.
+Criar um jogo de estrategia em turnos curtos onde o jogador resolve incidentes de ERP e aprende raciocinio tecnico sem ficar preso em uma interface complexa.
 
-Vou estruturar uma proposta sólida para você.
+## 1.2 Pilar de design
 
----
+- Simples de jogar em 2-5 minutos por sessao.
+- Dificil de dominar no medio prazo.
+- Recompensador para quem aprende as causas reais dos problemas.
+- Visual leve e funcional (graficos simples).
 
-# 🎮 Ideia do jogo: **Protheus Quest**
+## 1.3 Experiencia desejada
 
-## Conceito
+- Diversao imediata pela pressao de tempo e escolhas de risco.
+- Sensacao de progresso por desbloqueios.
+- Aprendizado por repeticao contextualizada.
 
-Um **jogo de simulação e estratégia** onde o jogador é um **analista de sistemas Protheus** dentro de uma empresa.
+## 2. Formato do jogo
 
-O objetivo é:
+- Plataforma: browser.
+- Genero: estrategia por turnos + card tactics.
+- Sessao curta: 10 a 20 turnos por partida.
+- Publico: analistas, consultores, estudantes de ERP.
 
-➡ **implantar, configurar e manter o ERP Protheus funcionando**
+## 3. Direcao visual (grafico simples)
 
-Enquanto enfrenta desafios como:
+## 3.1 Regra geral
 
-* bugs
-* erros de configuração
-* demandas do usuário
-* integrações
-* upgrades
-* problemas de banco de dados
+Focar em dashboard 2D limpo. Nada de mapa 3D, animacoes pesadas ou sistemas de combate complexos.
 
-O jogador evolui de **estagiário → consultor → arquiteto ERP**.
+## 3.2 Estilo visual recomendado
 
----
+- Layout de painel corporativo.
+- Cartoes de modulo com icones simples.
+- Barras de recurso horizontais.
+- Cores de severidade:
+  - verde (ok)
+  - amarelo (alerta)
+  - vermelho (critico)
 
-# 🧠 Objetivo educacional
+## 3.3 Elementos minimos de tela
 
-Ensinar:
+- Topo: recursos (`tempo`, `conhecimento`, `dinheiro`, `reputacao`).
+- Centro: incidente atual e opcoes.
+- Rodape: mao de cartas.
+- Lateral: fila de incidentes e objetivos da missao.
 
-* arquitetura do Protheus
-* módulos ERP
-* banco de dados
-* customizações
-* troubleshooting
-* integrações
+## 3.4 Animacoes leves
 
-Enquanto o jogador **resolve problemas reais do mundo Protheus**.
+- Fade curto ao abrir incidente.
+- Pulse no recurso que foi afetado.
+- Shake leve em falha critica.
 
----
+## 4. Loop principal de gameplay
 
-# 🎲 Tipo de jogo
+1. Sorteio de incidente baseado em modulo e dificuldade.
+2. Jogador escolhe uma carta (ou acao basica).
+3. Engine calcula resultado + risco colateral.
+4. Recursos sao atualizados.
+5. Jogador recebe feedback tecnico.
+6. Avanca para o proximo turno.
 
-Mistura de:
+## 5. Mecanicas para diversao + aprendizado
 
-* **Card Game**
-* **Jogo de Tabuleiro**
-* **Simulador de ERP**
+## 5.1 Mecanicas de diversao
 
-Algo próximo de:
+- Escolhas de alto risco: resolver rapido com chance de colateral.
+- Combos simples de cartas em 2 turnos.
+- Eventos em cadeia (um modulo afeta outro).
+- Bonus por streak de resolucao correta.
 
-* Game Dev Tycoon
-* Plague Inc
-* Reigns
-* Mini Metro
+## 5.2 Mecanicas de aprendizado
 
----
+- Feedback explicando causa provavel do problema.
+- Dica liberada apos erro repetido.
+- Glossario tecnico curto por evento.
+- Missao de diagnostico sem resposta imediata (estimula raciocinio).
 
-# 🧩 Estrutura do jogo
+## 5.3 Mecanicas de progressao
 
-Mapa estilo **tabuleiro corporativo**.
+- XP por decisao correta.
+- Niveis de carreira:
+  - Estagiario
+  - Analista Jr
+  - Analista Pl
+  - Consultor
+  - Arquiteto ERP
+- Desbloqueio gradual de cartas e perks.
+
+## 6. Sistema de recursos
+
+- `tempo`: energia operacional por turno.
+- `conhecimento`: capacidade de usar cartas avancadas.
+- `dinheiro`: margem para medidas caras.
+- `reputacao`: confianca dos usuarios e diretoria.
+
+Regra de tensao:
+- recursos baixos aumentam chance de incidente critico.
+- reputacao baixa reduz margem para erro.
+
+## 7. Sistema de cartas (versao simples)
+
+## 7.1 Categorias iniciais
+
+- SQL
+- ADVPL
+- Configuracao
+- Suporte
+- Infra
+
+## 7.2 Exemplo de cartas
+
+- `Revisar Indice SQL`: melhora performance, custa tempo moderado.
+- `Patch ADVPL Rapido`: resolve agora, aumenta risco futuro.
+- `Ajustar Parametro MV`: impacto alto em modulo especifico.
+- `War Room com Usuarios`: aumenta reputacao, consome tempo.
+- `Reiniciar Servico`: acao emergencial com risco de recorrencia.
+
+## 7.3 Combos recomendados
+
+- `Diagnostico SQL` + `Indice Otimizado`: bonus de mitigacao.
+- `Analise Log` + `Patch Controlado`: reduz chance de colateral.
+- `Comunicacao com Usuario` + `Ajuste Funcional`: bonus de reputacao.
+
+## 8. Sistema de eventos/incidentes
+
+## 8.1 Taxonomia
+
+- Operacional (erros de processo)
+- Tecnico (infra, banco, appserver)
+- Fiscal/legislativo (regras e validacoes)
+- Integracao (APIs, filas, rotinas)
+
+## 8.2 Severidade
+
+- Low
+- Medium
+- High
+- Critical
+
+## 8.3 Eventos em cadeia
 
 Exemplo:
+- Nota rejeitada no faturamento -> atraso de recebimento -> queda de reputacao no financeiro.
 
-```
-Empresa
+## 9. Ideias de desafios Protheus (catalogo inicial)
 
-        [Compras]
-           |
-[Estoque]--+--[Faturamento]
-           |
-       [Financeiro]
-           |
-      [Contabilidade]
-```
+## 9.1 Compras
 
-Cada módulo gera **desafios**.
+- Pedido bloqueado por alcada incorreta.
+- Fornecedor sem condicao de pagamento valida.
+- TES de entrada divergente.
+- Pedido duplicado por rotina manual.
+- Integracao de cotacao falhou.
 
----
+## 9.2 Estoque
 
-# 🧑‍💻 Personagem do jogador
+- Saldo negativo em produto critico.
+- Custo medio inconsistente apos ajuste.
+- Inventario fisico divergente do sistemico.
+- Enderecamento invalido no armazem.
+- Transferencia interna nao confirmada.
 
-O jogador começa como:
+## 9.3 Faturamento/Fiscal
 
-### 👶 Estagiário Protheus
+- NF-e rejeitada por CFOP invalido.
+- NF-e rejeitada por CST inconsistente.
+- Serie de documento incorreta.
+- TES de saida incompatível com operacao.
+- Regra fiscal aplicada ao cliente errado.
 
-Skills:
+## 9.4 Financeiro
 
-* SQL básico
-* suporte usuário
+- Titulo duplicado no contas a pagar.
+- Baixa automatica aplicada em aberto errado.
+- Juros/multa calculados incorretamente.
+- Conciliacao bancaria parcial.
+- Fluxo de caixa com buraco por integracao falha.
 
-Depois evolui:
+## 9.5 Banco/Infra
 
-| Nível         | Cargo          |
-| ------------- | -------------- |
-| Estagiário    | suporte        |
-| Analista Jr   | parametrização |
-| Analista Pl   | customizações  |
-| Consultor     | projetos       |
-| Arquiteto ERP | arquitetura    |
+- DBAccess indisponivel.
+- AppServer com fila travada.
+- Query pesada degradando rotinas.
+- Deadlock em fechamento do dia.
+- Job noturno nao executou.
 
----
+## 9.6 Customizacao e sustentacao
 
-# 🃏 Sistema de cartas
+- Patch sobrescreveu customizacao.
+- Fonte ADVPL sem compatibilidade em release nova.
+- Campo custom sem indice degradou desempenho.
+- Ponto de entrada executando regra duplicada.
+- Erro intermitente por dependencia externa.
 
-Cartas representam **ações técnicas**.
+## 10. Modo de desafio educativo
 
-Exemplos:
+## 10.1 Desafio "Diagnostico"
 
-### 🧾 Carta SQL
+- Jogador recebe sintomas.
+- Escolhe hipoteses de causa raiz.
+- Depois escolhe acao tecnica.
+- Ganha bonus se diagnostico e acao estiverem corretos.
 
-```
-SELECT mal feito
+## 10.2 Desafio "SLA"
 
--20 performance
-+10 chance de travar o servidor
-```
+- Resolver X incidentes em Y turnos.
+- Penalidade forte por atraso.
+- Recompensa de reputacao alta.
 
----
+## 10.3 Desafio "Mudanca de release"
 
-### 🛠 Carta ADVPL
+- Entram eventos extras durante janela de deploy.
+- Jogador decide rollback ou hotfix.
+- Ensina tradeoff de risco operacional.
 
-```
-Customização ADVPL
+## 10.4 Desafio "Auditoria"
 
-+50 solução de problema
-+10 risco de bug futuro
-```
+- Objetivo: zerar inconsistencias de processo.
+- Eventos com foco em rastreabilidade e compliance.
 
----
+## 11. Missao exemplo (completo)
 
-### ⚙ Carta Configuração
+Missao: `Fechamento sem caos`
 
-```
-Parâmetro MV alterado
+Contexto:
+- Ultimo dia do mes.
+- 4 incidentes em fila.
+- Recursos medianos.
 
-+30 solução
-+20 chance de quebrar outro módulo
-```
+Objetivo:
+- Finalizar 6 turnos com reputacao >= 40.
+- Evitar colapso em Financeiro e Banco.
 
----
+Recompensa:
+- +XP alto
+- desbloqueio da carta `Plano de Contingencia`
 
-### 🔥 Carta Incidente
+## 12. Balanceamento inicial para MVP
 
-```
-Usuário apagou pedido de compra
+- Taxa de sucesso alvo em `normal`: 50%-65% para iniciante.
+- Incidentes criticos por partida: 2 a 4.
+- Cartas "fortes" com cooldown maior.
+- Penalidade em cascata limitada para nao frustrar cedo.
 
-Tempo limite: 3 turnos
-Impacto: estoque inconsistente
-```
+## 13. Estrategia de conteudo por sprints
 
----
+## Sprint 1
 
-# 🏢 Sistema de módulos
+- 8 eventos basicos.
+- 5 cartas.
+- 1 missao principal.
 
-Cada módulo tem desafios próprios.
+## Sprint 2
 
-## Compras
+- 12 eventos adicionais.
+- 7 cartas novas.
+- 3 missoes por modulo.
 
-Problemas possíveis:
+## Sprint 3
 
-* pedido bloqueado
-* fornecedor errado
-* TES errado
+- 10 eventos avancados.
+- 8 cartas finais do MVP.
+- calibracao de dificuldade.
 
----
+## 14. Feedback pedagogico (pos-turno)
 
-## Estoque
+Sempre mostrar:
+- o que o jogador escolheu.
+- por que funcionou ou falhou.
+- qual conceito tecnico foi aplicado.
+- qual seria uma alternativa segura.
 
-Problemas:
+Formato curto (3-4 linhas) para manter ritmo do jogo.
 
-* saldo negativo
-* custo médio errado
-* inventário divergente
+## 15. Mecanicas extras opcionais pos-MVP
 
----
+- Desafio diario com seed fixa.
+- Ranking semanal por eficiencia.
+- Biblioteca de casos reais anonimizados.
+- Modo "apenas diagnostico" para treino rapido.
 
-## Faturamento
+## 16. Checklist de design antes de implementar
 
-Problemas:
+- [ ] O evento eh divertido e didatico?
+- [ ] Existe pelo menos 1 resposta segura e 1 arriscada?
+- [ ] O feedback ensina algo objetivo?
+- [ ] O jogador entende visualmente o impacto?
+- [ ] O tempo de decisao continua curto?
 
-* TES errado
-* CFOP errado
-* nota rejeitada SEFAZ
+## 17. Prompt pronto para IA gerar novos desafios
 
----
-
-## Financeiro
-
-Problemas:
-
-* contas duplicadas
-* baixa incorreta
-* integração banco
-
----
-
-# ⚙ Arquitetura técnica (para ensinar)
-
-Parte do jogo também ensina a estrutura real do Protheus.
-
-Exemplo:
-
-Mapa técnico:
-
-```
-AppServer
-   |
-DBAccess
-   |
-Banco de Dados
-```
-
-Cartas podem atacar esses pontos.
-
----
-
-### Exemplo evento
-
-```
-DBAccess caiu
+```txt
+Crie [N] eventos novos para o jogo Protheus Quest no formato JSON.
+Cada evento deve conter: code, title, moduleType, severity, symptoms,
+rootCauseHint, suggestedActions, rightAction, wrongActionImpact, learningPoint.
+Regras: manter linguagem objetiva, dificuldade progressiva e foco em troubleshooting ERP.
 ```
 
-Opções:
+## 18. Resultado esperado do design
 
-* reiniciar serviço
-* reiniciar server
-* abrir chamado TOTVS
+- Jogador se diverte pela pressao de escolha e progressao.
+- Jogador aprende conceitos praticos de sustentacao ERP.
+- Equipe consegue evoluir conteudo rapido sem aumentar complexidade tecnica.
 
----
-
-# 🧨 Eventos aleatórios
-
-Eventos tipo:
-
-### 🧑 Usuário irritado
-
-```
-PCP reclama que o estoque está errado
-```
-
-Opções:
-
-* ignorar
-* investigar
-* corrigir
-
----
-
-### 💣 Patch TOTVS
-
-```
-Atualização liberada
-```
-
-Escolhas:
-
-* atualizar
-* esperar
-* ignorar
-
-Risco:
-
-```
-update quebra customização
-```
-
----
-
-# 📊 Sistema de recursos
-
-O jogador precisa administrar:
-
-| Recurso      | Significado          |
-| ------------ | -------------------- |
-| Tempo        | horas do analista    |
-| Conhecimento | skill                |
-| Dinheiro     | orçamento TI         |
-| Reputação    | confiança da empresa |
-
----
-
-# 🧠 Sistema de conhecimento
-
-Jogador aprende habilidades:
-
-```
-SQL
-ADVPL
-Parametrização
-Integrações
-Banco de dados
-Arquitetura
-```
-
-Quanto maior o nível:
-
-➡ mais soluções disponíveis
-
----
-
-# 🎯 Exemplo de missão
-
-### Missão
-
-```
-Usuário não consegue faturar pedido
-```
-
-Situação:
-
-```
-TES incorreto
-```
-
-Cartas possíveis:
-
-* revisar TES
-* alterar CFOP
-* criar customização
-
-Solução correta:
-
-```
-Corrigir TES
-```
-
----
-
-# 🎨 Interface
-
-Visual simples estilo **dashboard corporativo**.
-
-Tela exemplo:
-
-```
----------------------------------
-Empresa: Makita Tools
-Servidor: OK
-DB: OK
-
-Problemas:
-
-[!] estoque divergente
-[!] pedido bloqueado
-
-Cartas disponíveis:
-
-ADVPL
-SQL
-Configuração
-Suporte
----------------------------------
-```
-
----
-
-# 🧱 Tecnologias para construir
-
-Como você quer fazer **browser game**, recomendo:
-
-### Frontend
-
-```
-Angular ou React
-```
-
-ou
-
-```
-Phaser.js (motor de jogo 2D)
-```
-
----
-
-### Backend
-
-Você já trabalha com Node:
-
-```
-Node.js
-NestJS ou Express
-```
-
----
-
-### Banco
-
-```
-PostgreSQL
-```
-
----
-
-# 🧠 Ideia MUITO boa para você
-
-Você trabalha muito com:
-
-* Protheus
-* ERP
-* SQL
-* regras de negócio
-
-Isso viraria um jogo **muito nichado e único**.
-
-Algo tipo:
-
-```
-Protheus Simulator
-```
-
-Existe inclusive mercado para isso em:
-
-* universidades
-* treinamentos
-* consultorias ERP
-
----
-
-# 💡 Ideia ainda melhor
-
-Modo multiplayer:
-
-```
-Empresa vs Empresa
-```
-
-ou
-
-```
-Consultor vs Sistema quebrado
-```
-
----
-
-# 🚀 MVP (versão inicial)
-
-Primeira versão simples:
-
-### Tabuleiro com 5 módulos
-
-* Compras
-* Estoque
-* Faturamento
-* Financeiro
-* Banco de dados
-
----
-
-### 20 cartas
-
-* SQL
-* ADVPL
-* Parâmetro
-* Suporte
-* Bug
-
----
-
-### 10 eventos
-
-* estoque negativo
-* nota rejeitada
-* dbaccess caiu
-* pedido travado
-
----
-
-# 🧠 Outra ideia muito legal
-
-Modo **debug**.
-
-O jogo mostra algo tipo:
-
-```
-Erro:
-
-Alias does not exist
-```
-
-Jogador precisa descobrir a causa.
-
----
-
-# ⭐ Nome possíveis
-
-Alguns nomes bons:
-
-**Protheus Quest**
-
-**ERP Tycoon**
-
-**Protheus Simulator**
-
-**ADVPL Master**
-
-**ERP Architect**
-
----
-
-# Se quiser, eu posso também te ajudar a criar:
-
-1️⃣ **Game Design Document completo**
-2️⃣ **Arquitetura técnica do jogo**
-3️⃣ **Mapa completo do ERP dentro do jogo**
-4️⃣ **100 cartas baseadas em problemas reais do Protheus**
-5️⃣ **Protótipo inicial em JavaScript**
-
-Inclusive dá para fazer algo **bem minimalista**, tipo **vampire survivors + card game**, que fica perfeito para browser.
-
-Se quiser, no próximo passo posso montar:
-
-🧠 **A versão inicial do jogo (MVP) já estruturada para você começar a programar.**
+Fim.

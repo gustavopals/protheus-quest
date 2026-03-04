@@ -1,354 +1,331 @@
-# CODEX.MD — Protheus Quest
+# CODEX.MD - Protheus Quest
 
-> Documento mestre para desenvolvimento orientado por IA (vibe coding).
-> Objetivo: permitir que um agente implemente o projeto de ponta a ponta com mínima ambiguidade.
+Documento mestre para orientar desenvolvimento humano + agente de IA com baixa ambiguidade.
+Objetivo: permitir execução ponta a ponta de um novo repositório com front Angular, backend Node.js/Express, Prisma ORM e banco PostgreSQL ou SQLite no início.
 
----
+## 1. Como usar este documento
 
-## 1) Visão do produto
+- Este arquivo eh a fonte principal de contexto tecnico e de produto.
+- Use junto com [chat-game-ideia.md](/opt/protheus-quest/chat-game-ideia.md) para regras de design do jogo e desafios Protheus.
+- Em cada task de implementacao, copiar a secao `Template de Task para IA` (secao 20).
+- Evitar tarefas grandes sem critero de aceite e sem DoD.
 
-**Nome:** Protheus Quest
-**Tipo:** Browser game de simulação + estratégia + card game técnico
-**Tema:** Operação e manutenção de ERP inspirado em cenários reais (Protheus-like)
-**Objetivo do jogador:** manter a empresa operando, resolver incidentes e evoluir carreira técnica.
+## 2. Visao de produto
 
-### 1.1 Objetivos de negócio
+### 2.1 Proposta
 
-- Criar um jogo nichado para aprendizado técnico em ERP.
-- Habilitar uso em treinamento corporativo e educacional.
-- Permitir expansão para multiplayer e ranking.
+Protheus Quest eh um jogo web de estrategia tecnica onde o jogador administra incidentes de ERP em turnos curtos.
 
-### 1.2 Objetivos educacionais
+### 2.2 Objetivo do usuario final
 
-- Ensinar arquitetura de ERP (AppServer, DBAccess, Banco).
-- Ensinar troubleshooting e priorização técnica.
-- Ensinar impacto de parametrização, customização e SQL.
+- Se divertir com decisoes de alto impacto tecnico.
+- Aprender troubleshooting em cenarios inspirados no ecossistema Protheus.
+- Evoluir de suporte basico para arquiteto ERP.
 
-### 1.3 Público-alvo
+### 2.3 Objetivo de negocio
 
-- Analistas de sistemas ERP (junior a sênior).
-- Consultores e estudantes de tecnologia de gestão.
-- Times de treinamento de consultorias e universidades.
+- Entregar MVP jogavel em browser em ate 5-8 semanas.
+- Criar base escalavel para conteudo educacional e desafios recorrentes.
 
----
+### 2.4 Objetivo educacional
 
-## 2) Escopo do MVP
+- Ensinar conexoes entre modulos (Compras, Estoque, Faturamento, Financeiro, Fiscal).
+- Ensinar diagnostico tecnico (parametros, regras, integracoes, banco e performance).
+- Ensinar priorizacao sob restricao de tempo e recursos.
 
-### 2.1 Escopo **IN** (primeira versão)
+## 3. Principios de arquitetura
 
-- Modo single-player.
-- Tabuleiro com 5 módulos: Compras, Estoque, Faturamento, Financeiro, Banco de Dados.
-- 20 cartas de ação técnica.
-- 10 eventos/incidentes principais.
-- Sistema de recursos: Tempo, Conhecimento, Dinheiro, Reputação.
-- Missões com solução correta/alternativas e impacto.
-- Progressão básica de carreira (Estagiário → Arquiteto).
-- Dashboard web com turnos.
+- Separacao clara entre `API HTTP`, `dominio do jogo` e `persistencia`.
+- Regras da engine devem ser deterministicas e testaveis sem Express.
+- Contratos de API estaveis e versionados (`/api/v1`).
+- Backend stateless (JWT), com estado de jogo persistido em banco.
+- Frontend com estado previsivel (Signals + services por feature).
+- Adotar simplicidade no MVP e evitar over-engineering.
 
-### 2.2 Escopo **OUT** (fora do MVP)
+## 4. Escopo funcional
 
-- Multiplayer em tempo real.
-- PvP assíncrono.
-- Loja/economia avançada.
-- IA generativa de eventos dinâmicos em produção.
+### 4.1 MVP (in)
 
----
+- Cadastro/login.
+- Sessao de jogo single-player.
+- Loop de turno completo: incidente -> decisao -> resultado -> persistencia.
+- 5 modulos de jogo: Compras, Estoque, Faturamento, Financeiro, Banco.
+- 20 cartas base.
+- 30 desafios/eventos base.
+- 3 dificuldades (`easy`, `normal`, `hard`).
+- Progressao de nivel com desbloqueio de cartas.
+- Historico de turnos e score final.
 
-## 3) Stack técnica alvo
+### 4.2 Fora do MVP (out)
 
-## 3.1 Monorepo
+- Multiplayer realtime.
+- IA generativa para criar eventos em producao.
+- Marketplace de cartas.
+- Editor visual completo de regras.
 
-- `pnpm` workspaces (recomendado).
-- Repositório único com frontend + backend + packages compartilhados.
+## 5. Stack e versoes alvo
 
-### 3.2 Frontend
+### 5.1 Runtime
 
-- Angular (v19+ recomendado).
-- UI: Angular Material **ou** Tailwind + componentes próprios simples.
-- Estado: Signals (preferencial) + serviços.
-- Roteamento com lazy loading por feature.
+- Node.js LTS (22+ recomendado).
+- pnpm 9+.
+- TypeScript strict.
 
-### 3.3 Backend
+### 5.2 Frontend
 
-- Node.js (LTS atual).
-- Express.js.
+- Angular 19+.
+- Angular Router com lazy loading.
+- Angular Signals para estado local por feature.
+- UI: Angular Material ou componentes custom simples.
+
+### 5.3 Backend
+
+- Express 5+.
 - Prisma ORM.
-- Zod para validação de input.
-- JWT para autenticação (MVP simples).
+- Zod para validacao.
+- JWT + refresh token.
+- Pino para logs.
 
-### 3.4 Banco
+### 5.4 Banco
 
-- **Produção:** PostgreSQL.
-- **Desenvolvimento inicial:** SQLite (opcional, para acelerar setup local).
-- Prisma com suporte via variável de ambiente (um provider por schema).
+- Producao: PostgreSQL.
+- Inicio rapido opcional: SQLite.
 
-### 3.5 Qualidade e DevEx
+### 5.5 Qualidade
 
-- TypeScript em todo o projeto.
 - ESLint + Prettier.
-- Testes: Vitest/Jest (backend) e Angular Test Runner/Jest (frontend).
-- CI: GitHub Actions.
-- Docker Compose para infra local (API + Postgres + Adminer opcional).
+- Vitest/Jest para backend e engine.
+- Testes do Angular para frontend.
+- GitHub Actions para CI.
 
----
-
-## 4) Estrutura de pastas proposta
+## 6. Estrutura de repositorio (monorepo)
 
 ```txt
 protheus-quest/
   apps/
-    web/                      # Angular
-      src/
-        app/
-          core/
-          shared/
-          features/
-            auth/
-            game/
-            modules/
-            cards/
-            events/
-            profile/
-            admin/
-    api/                      # Express + Prisma
-      src/
-        config/
-        core/
-          http/
-          errors/
-          logger/
-          middleware/
-        modules/
-          auth/
-          users/
-          game-sessions/
-          modules/
-          cards/
-          events/
-          missions/
-          turns/
-          leaderboard/
-        prisma/
-          schema.prisma
-          migrations/
-          seed.ts
+    web/                         # Angular
+    api/                         # Express + Prisma
   packages/
-    shared-types/             # Tipos e contratos compartilhados
-    game-engine/              # Regras puras do jogo (determinísticas)
-    config/                   # tsconfig/eslint/prettier compartilhados
+    game-engine/                 # Regras deterministicas do jogo
+    shared-types/                # DTOs, enums e tipos compartilhados
+    config/                      # configs comuns (tsconfig/eslint/prettier)
   docs/
-    adr/                      # Architectural Decision Records
+    adr/
     api/
     game-design/
-  .github/
-    workflows/
+  docker/
+    compose/
+  scripts/
   CODEX.MD
+  chat-game-ideia.md
   README.md
   pnpm-workspace.yaml
 ```
 
----
+## 7. Decisoes importantes (ADR resumido)
 
-## 5) Arquitetura funcional
+- ADR-001: Monorepo com pnpm workspaces.
+- ADR-002: Angular + Express por velocidade de entrega e curva de aprendizado.
+- ADR-003: Engine de jogo isolada em package compartilhado.
+- ADR-004: PostgreSQL como destino final de producao.
+- ADR-005: SQLite permitido apenas para bootstrap local rapido.
 
-### 5.1 Componentes
+## 8. Estrategia de banco (Postgres ou SQLite)
 
-- **Web App (Angular):** interface de jogo, decisões de turno, visualização de status.
-- **API (Express):** orquestração de sessão, persistência e autenticação.
-- **Game Engine (package):** regras de cálculo de impacto, resolução de eventos e progressão.
-- **Banco (Prisma):** armazenamento de usuários, sessões, estado de jogo, cartas e eventos.
+### 8.1 Recomendacao pratica
 
-### 5.2 Princípios de arquitetura
+Se o time puder rodar Docker local, comecar direto em PostgreSQL para reduzir retrabalho.
 
-- Regras de domínio **fora** do controller HTTP.
-- Engine determinística e testável (sem dependência de Express/Prisma).
-- Contratos DTO versionados.
-- Feature modules com responsabilidade clara.
+### 8.2 Quando usar SQLite no inicio
 
-### 5.3 Fluxo principal de turno
+- Protótipo muito inicial.
+- Sem infraestrutura local.
+- Time pequeno validando mecanicas.
 
-1. Jogador inicia/continua sessão.
-2. API gera incidentes/eventos do turno com seed pseudoaleatória.
-3. Frontend exibe opções (cartas/ações).
-4. Jogador escolhe ação.
-5. Engine resolve impacto em recursos + módulos + progresso.
-6. API persiste estado e retorna resultado narrativo + numérico.
+### 8.3 Plano de transicao SQLite -> Postgres
 
----
+1. Congelar mudancas de schema.
+2. Exportar dados de seed e fixtures.
+3. Ajustar `schema.prisma` para provider PostgreSQL.
+4. Gerar novas migracoes.
+5. Reaplicar seed em Postgres.
+6. Validar fluxo completo com smoke test.
 
-## 6) Modelo de domínio (alto nível)
+### 8.4 Convencao recomendada para schema
 
-### 6.1 Entidades principais
+- `apps/api/prisma/schema.prisma` (ativo).
+- `apps/api/prisma/schema.sqlite.prisma` (backup de bootstrap, opcional).
 
-- `User`
-- `Profile`
-- `GameSession`
-- `Turn`
-- `ModuleState` (Compras/Estoque/Faturamento/...)
-- `Card`
-- `Deck`
-- `Event`
-- `Mission`
-- `Decision`
-- `Outcome`
-- `Skill`
-- `Inventory` (cartas/habilidades)
+## 9. Modelo de dominio (MVP)
 
-### 6.2 Recursos globais da sessão
+### 9.1 Entidades principais
+
+- `User`: identidade e autenticacao.
+- `Profile`: progresso global do jogador.
+- `GameSession`: estado de uma partida.
+- `SessionResource`: recursos da sessao (tempo, conhecimento, dinheiro, reputacao).
+- `ModuleState`: estado dos modulos do ERP por sessao.
+- `Turn`: unidade temporal de jogo.
+- `Event`: incidente/desafio apresentado ao jogador.
+- `Card`: acao tecnica disponivel.
+- `Decision`: escolha do jogador no turno.
+- `Outcome`: resultado calculado pela engine.
+- `Mission`: objetivos compostos.
+- `SessionMission`: progresso por missao.
+
+### 9.2 Recursos globais
 
 - `time` (0-100)
 - `knowledge` (0-100)
 - `budget` (0-100)
 - `reputation` (0-100)
 
-Condição de derrota (MVP sugerida): qualquer recurso <= 0.
-Condição de vitória: completar X missões críticas + manter recursos mínimos por Y turnos.
+Derrota: qualquer recurso <= 0.
+Vitoria baseline: completar N missoes criticas sem perder sessao.
 
----
+### 9.3 Modulos de jogo
 
-## 7) Prisma ORM — especificação inicial
+- `PURCHASES`
+- `INVENTORY`
+- `BILLING`
+- `FINANCE`
+- `DATABASE`
 
-## 7.1 Estratégia de banco
+## 10. Regras da game engine
 
-### Opção A (recomendada): Postgres desde o início
+### 10.1 Requisitos da engine
 
-- Menos retrabalho de migração.
-- Melhor para evolução multiplayer/ranking.
+- Pura (sem acesso a banco, sem chamadas HTTP).
+- Deterministica por `seed` + `state` + `action`.
+- Testavel com snapshots e casos de borda.
 
-### Opção B: SQLite no início + migração para Postgres
-
-- Mais rápido para protótipo local.
-- Exige plano de transição validado cedo.
-
-## 7.2 Modelos iniciais (MVP)
-
-- `User(id, email, passwordHash, role, createdAt)`
-- `GameSession(id, userId, status, currentTurn, difficulty, seed, createdAt, updatedAt)`
-- `SessionResources(id, sessionId, time, knowledge, budget, reputation)`
-- `ModuleState(id, sessionId, moduleType, health, riskLevel, lastIncidentAt)`
-- `Card(id, code, name, category, rarity, basePower, riskModifier, description)`
-- `SessionCard(id, sessionId, cardId, quantity, cooldownTurns)`
-- `Event(id, code, title, moduleType, severity, payloadJson)`
-- `Turn(id, sessionId, number, startedAt, finishedAt)`
-- `Decision(id, turnId, eventId, chosenCardId, chosenAction, responseTimeMs)`
-- `Outcome(id, decisionId, deltaTime, deltaKnowledge, deltaBudget, deltaReputation, notes)`
-- `Mission(id, code, title, moduleType, objectiveJson, rewardJson, penaltyJson)`
-- `SessionMission(id, sessionId, missionId, status, progressJson)`
-
-## 7.3 Índices e constraints
-
-- Unique: `User.email`, `Card.code`, `Event.code`, `Mission.code`.
-- Índices: `GameSession.userId`, `Turn.sessionId + number`, `ModuleState.sessionId + moduleType`.
-- Integridade: soft delete apenas se necessário, priorizar consistência referencial.
-
-## 7.4 Seeds
-
-- Seed de 20 cartas base.
-- Seed de 10 eventos base.
-- Seed de 10 missões base.
-- Seed de dificuldades (`easy`, `normal`, `hard`).
-
----
-
-## 8) Regras de jogo (engine)
-
-### 8.1 Fórmula de impacto (exemplo base)
+### 10.2 Formula base de impacto
 
 ```txt
-impactScore = (card.basePower + knowledgeFactor + moduleAffinity) - (event.severity * riskPenalty)
+impact = (cardPower + knowledgeBonus + moduleAffinity + comboBonus)
+         - (eventSeverityWeight + moduleRiskPenalty + randomVariance)
 ```
 
-Onde:
+Definicoes:
+- `knowledgeBonus = floor(knowledge / 12)`
+- `moduleAffinity = +8` quando carta combina com modulo alvo
+- `randomVariance = valor pseudoaleatorio baseado em seed (-5..+5)`
 
-- `knowledgeFactor = floor(knowledge / 10)`
-- `moduleAffinity = +10` se carta combina com módulo, senão `0`
-- `riskPenalty = 1 + (moduleRiskLevel / 100)`
+### 10.3 Faixas de resultado
 
-### 8.2 Resultado por faixa
+- `>= 65`: sucesso excelente.
+- `40-64`: sucesso parcial controlado.
+- `20-39`: mitigacao minima.
+- `< 20`: falha com efeito colateral.
 
-- `impactScore >= 60` → sucesso excelente
-- `30..59` → sucesso parcial
-- `10..29` → mitigação mínima
-- `< 10` → falha com efeito colateral
+### 10.4 Efeito colateral possivel
 
-### 8.3 Efeitos colaterais possíveis
+- Aumento de risco no modulo atual.
+- Impacto negativo em modulo adjacente.
+- Perda de reputacao por atraso.
 
-- Quebra em módulo adjacente.
-- Aumento de risco no próximo turno.
-- Redução de reputação por atraso.
+### 10.5 Progressao de carreira
 
-### 8.4 Progressão de carreira
+- XP por turno resolvido + bonus por eficiencia.
+- Niveis: Estagiario -> Analista Jr -> Analista Pl -> Consultor -> Arquiteto.
+- Cada nivel desbloqueia cartas, perks e reducao de penalidade.
 
-- XP por decisão correta + missão concluída.
-- Níveis:
-  - 1 Estagiário
-  - 2 Analista Jr
-  - 3 Analista Pl
-  - 4 Consultor
-  - 5 Arquiteto ERP
-
-Desbloqueios por nível: novas cartas, redução de penalidades, ações avançadas.
-
----
-
-## 9) Especificação de API (REST)
+## 11. API REST (contrato inicial)
 
 Base URL: `/api/v1`
 
-### 9.1 Auth
+### 11.1 Auth
 
 - `POST /auth/register`
 - `POST /auth/login`
 - `POST /auth/refresh`
 - `GET /auth/me`
 
-### 9.2 Sessão de jogo
+### 11.2 Sessao
 
-- `POST /sessions` cria sessão
-- `GET /sessions/:id` detalhes da sessão
-- `POST /sessions/:id/start-turn` inicia turno
-- `POST /sessions/:id/decisions` envia decisão
-- `POST /sessions/:id/end-turn` fecha turno
-- `GET /sessions/:id/state` estado resumido
+- `POST /sessions`
+- `GET /sessions/:id`
+- `POST /sessions/:id/start-turn`
+- `POST /sessions/:id/decisions`
+- `POST /sessions/:id/end-turn`
+- `GET /sessions/:id/state`
 
-### 9.3 Catálogo
+### 11.3 Catalogo
 
 - `GET /cards`
 - `GET /events`
 - `GET /missions`
 - `GET /modules`
 
-### 9.4 Leaderboard
+### 11.4 Ranking
 
 - `GET /leaderboard/global`
-- `GET /leaderboard/friends` (pós-MVP)
 
-### 9.5 Padrão de resposta
+### 11.5 Formato padrao de resposta
 
 ```json
 {
   "success": true,
   "data": {},
-  "meta": { "requestId": "..." },
+  "meta": {
+    "requestId": "req_123"
+  },
   "error": null
 }
 ```
 
-### 9.6 Erros
+### 11.6 Erros padrao
 
-- `400` validação
-- `401` não autenticado
-- `403` sem permissão
-- `404` não encontrado
+- `400` validacao
+- `401` autenticacao
+- `403` autorizacao
+- `404` recurso nao encontrado
 - `409` conflito de estado
-- `422` regra de domínio inválida
+- `422` regra de dominio invalida
 - `500` erro interno
 
----
+## 12. Backend: organizacao por modulo
 
-## 10) Frontend Angular — blueprint
+```txt
+apps/api/src/
+  config/
+  core/
+    errors/
+    http/
+    logger/
+    middleware/
+  modules/
+    auth/
+    users/
+    sessions/
+    turns/
+    events/
+    cards/
+    missions/
+    leaderboard/
+  prisma/
+```
 
-### 10.1 Rotas
+### 12.1 Padrao interno por modulo
+
+- `*.route.ts`
+- `*.controller.ts`
+- `*.service.ts`
+- `*.repository.ts` (se necessario)
+- `*.schema.ts` (zod)
+- `*.mapper.ts` (DTO)
+- `*.spec.ts`
+
+### 12.2 Regras de implementacao
+
+- Controller fino (so parse + response).
+- Service com regra de negocio.
+- Repositorio isolando acesso Prisma quando o modulo crescer.
+- Nenhuma regra de engine dentro de controller.
+
+## 13. Frontend Angular: blueprint
+
+### 13.1 Rotas
 
 - `/login`
 - `/dashboard`
@@ -357,93 +334,118 @@ Base URL: `/api/v1`
 - `/cards`
 - `/missions`
 - `/profile`
-- `/admin` (feature flag)
 
-### 10.2 Estrutura por feature
+### 13.2 Estrutura por feature
 
-- `features/game`:
-  - `session-shell`
-  - `resource-panel`
-  - `module-board`
-  - `incident-card`
-  - `action-hand`
-  - `turn-log`
+```txt
+apps/web/src/app/
+  core/
+  shared/
+  features/
+    auth/
+    dashboard/
+    game/
+      session-shell/
+      module-board/
+      incident-panel/
+      card-hand/
+      turn-result/
+      turn-log/
+    cards/
+    missions/
+    profile/
+```
 
-### 10.3 Estado de UI
+### 13.3 Estado de tela (signals)
 
 - `authState`
 - `sessionState`
 - `turnState`
 - `catalogState`
+- `profileState`
 
-### 10.4 UX mínima do MVP
+### 13.4 UX do MVP
 
-- Layout dashboard corporativo simples.
-- Painel de recursos sempre visível.
-- Lista de incidentes ativos com severidade.
-- Mão de cartas com cooldown e risco.
-- Feedback imediato após decisão (texto + impacto numérico).
+- Dashboard limpo e legivel.
+- Barras de recursos sempre visiveis.
+- Incidente com severidade destacada.
+- Escolha de carta em 1 clique.
+- Resultado textual + numerico imediato.
 
----
+## 14. Conteudo inicial (seed)
 
-## 11) Segurança e conformidade
+- 20 cartas divididas em categorias: SQL, ADVPL, Configuracao, Suporte, Infra.
+- 30 eventos/desafios inspirados em operacao ERP.
+- 15 missoes iniciais (com dificuldade progressiva).
+- 3 perfis de dificuldade global.
 
-- Senhas com hash (`argon2` recomendado).
-- JWT com expiração curta + refresh token.
-- Rate limit em auth e endpoints críticos.
-- Sanitização e validação rigorosa no backend.
-- CORS restrito por ambiente.
-- Logs sem dados sensíveis.
+### 14.1 Estrategia de dados
 
----
+- Conteudo em JSON versionado (`apps/api/src/content/*.json`).
+- Seed Prisma le JSON e popula tabelas.
+- IDs por `code` estavel (nao por nome exibido).
 
-## 12) Observabilidade e operação
+## 15. Seguranca
 
-- Logging estruturado (`pino` recomendado).
-- `requestId` por requisição.
+- Password hash com Argon2.
+- JWT access curto e refresh controlado.
+- Rate limit em login e endpoints sensiveis.
+- CORS por ambiente (whitelist).
+- Sanitizacao e validacao com Zod.
+- Logs sem segredos.
+
+## 16. Observabilidade e operacao
+
+- Logger estruturado (Pino).
+- `requestId` por requisicao.
 - Health endpoints:
   - `GET /health/live`
   - `GET /health/ready`
-- Métricas mínimas:
-  - latência p95
-  - erro por endpoint
-  - taxa de conclusão de turno
+- Metricas minimas:
+  - latencia p95 por rota
+  - erro por rota
+  - taxa de conclusao de turno
 
----
+## 17. Estrategia de testes
 
-## 13) Testes e qualidade
+### 17.1 Piramide
 
-### 13.1 Pirâmide de testes
+- Unitario: engine e regras de dominio (prioridade maxima).
+- Integracao: API + Prisma + banco de teste.
+- E2E: login -> iniciar sessao -> turno -> resultado.
 
-- Unitário (engine e regras): **alta prioridade**.
-- Integração (API + Prisma test DB): prioridade média/alta.
-- E2E (fluxo login → turno): prioridade média.
+### 17.2 Cobertura alvo
 
-### 13.2 Casos críticos para automatizar
+- Geral: 70%+
+- `game-engine`: 85%+
 
-- Resolução de incidente por faixa de impacto.
-- Penalidade por carta incorreta.
-- Progressão de nível por XP.
-- Integridade de transação em fim de turno.
-- Autorização por usuário/sessão.
+### 17.3 Casos obrigatorios
 
-### 13.3 Qualidade de código
+- Faixas de impacto da engine.
+- Falha por recurso zerado.
+- Persistencia de turno completa.
+- Autorizacao (usuario nao acessa sessao alheia).
+- Erro de contrato invalido retorna status correto.
 
-- Cobertura alvo inicial: 70% (engine acima de 85%).
-- Lint e type-check obrigatórios no CI.
-- Conventional Commits recomendados.
+## 18. CI/CD e ambientes
 
----
-
-## 14) DevOps e ambientes
-
-### 14.1 Ambientes
+### 18.1 Ambientes
 
 - `local`
 - `staging`
 - `production`
 
-### 14.2 Variáveis de ambiente (API)
+### 18.2 Pipeline minima
+
+1. install
+2. lint
+3. typecheck
+4. test
+5. build
+6. migrate (staging/prod)
+7. deploy
+
+### 18.3 Variaveis de ambiente (api)
 
 - `NODE_ENV`
 - `PORT`
@@ -453,350 +455,232 @@ Base URL: `/api/v1`
 - `CORS_ORIGIN`
 - `LOG_LEVEL`
 
-### 14.3 Docker Compose local
+## 19. Roadmap por etapas (inicio ao fim)
 
-Serviços sugeridos:
+## Etapa 0 - Setup do repo (Dia 1)
 
-- `api`
-- `db` (postgres)
-- `adminer` (opcional)
+- Criar monorepo pnpm.
+- Configurar `apps/web` e `apps/api`.
+- Lint/format/typecheck padrao.
 
-### 14.4 CI pipeline mínima
+DoD:
+- comando de build e lint funcionando em ambos apps.
 
-1. install
-2. lint
-3. typecheck
-4. test
-5. build
-6. (staging) migrate + deploy
+## Etapa 1 - Banco e autenticacao (Dia 2-3)
 
----
+- Definir provider inicial (Postgres ou SQLite).
+- Modelos `User`, `Profile` e auth JWT.
+- Migração e seed minima.
 
-## 15) Roadmap por fases (início ao fim)
+DoD:
+- registro/login funcionando + teste de integracao verde.
 
-## Fase 0 — Foundation (Dia 1-2)
+## Etapa 2 - Dominio base do jogo (Dia 4-7)
 
-- Criar monorepo.
-- Setup lint/format/tsconfig.
-- Setup Angular app + Express API.
-- Setup Prisma + primeira migração.
-- CI básico.
+- Modelos de sessao, turno, carta, evento, decisao, outcome.
+- Primeira versao da game-engine em package.
+- Endpoints de sessao e decisao.
 
-**DoD:** projeto sobe local com `web` e `api`.
+DoD:
+- ciclo de 1 turno funcionando via API.
 
-## Fase 1 — Núcleo do jogo (Dia 3-7)
+## Etapa 3 - Front jogavel (Semana 2)
 
-- Implementar entidades principais no backend.
-- Implementar package `game-engine` com regras puras.
-- Criar endpoints de sessão/turno/decisão.
-- Seed inicial de cartas/eventos/missões.
+- Dashboard de sessao.
+- Tela de turno e escolha de carta.
+- Exibicao de resultado e historico.
 
-**DoD:** jogo executa 1 turno completo via API.
+DoD:
+- usuario completo consegue jogar no browser.
 
-## Fase 2 — Interface jogável (Semana 2)
+## Etapa 4 - Conteudo e balanceamento (Semana 3)
 
-- Dashboard de sessão.
-- Render de incidentes + cartas.
-- Decisão e feedback visual.
-- Histórico básico do turno.
+- Expandir para 20 cartas, 30 eventos e 15 missoes.
+- Ajustar pesos e risco por telemetria local.
 
-**DoD:** usuário joga loop completo no browser.
+DoD:
+- dificuldade normal com taxa de vitoria inicial alvo (50-65%).
 
-## Fase 3 — Progressão e balanceamento (Semana 3)
+## Etapa 5 - Robustez e qualidade (Semana 4)
 
-- XP, níveis e desbloqueios.
-- Ajuste de dificuldade (`easy/normal/hard`).
-- Missões com estados e recompensas.
+- Testes criticos, logs estruturados e health checks.
+- Hardening de validacoes e autorizacao.
 
-**DoD:** progressão funcional e minimamente balanceada.
+DoD:
+- pipeline CI verde e smoke test estavel.
 
-## Fase 4 — Robustez (Semana 4)
+## Etapa 6 - Pre-lancamento (Semana 5-6)
 
-- Testes críticos automatizados.
-- Melhorias de logs e healthcheck.
-- Hardening de auth e validações.
-
-**DoD:** pronto para staging.
-
-## Fase 5 — Pré-lançamento (Semana 5)
-
-- UX polish mínimo.
+- Polimento UX.
 - Leaderboard global simples.
-- Deploy staging + checklist de release.
+- Deploy em staging com checklist de release.
 
-**DoD:** release candidata validada.
+DoD:
+- release candidate validada.
 
-## Fase 6 — Pós-MVP
+## Etapa 7 - Pos-MVP
 
-- Multiplayer assíncrono.
-- Editor de cartas/eventos para admin.
-- Modo desafio diário.
+- Multiplayer assincrono.
+- Desafio diario.
+- Editor interno de eventos/cartas.
 
----
+## 20. Vibe coding: regras para agente de IA
 
-## 16) Backlog inicial (priorizado)
+### 20.1 Modo de execucao
 
-### Epic A — Plataforma técnica
+- Sempre executar tarefas atomicas.
+- Nunca misturar feature + refactor amplo no mesmo PR.
+- Sempre incluir impacto, riscos e validacao no output.
+- Rodar testes relevantes antes de finalizar task.
 
-- A1: Monorepo com workspaces.
-- A2: Pipeline CI.
-- A3: Docker local.
-- A4: Config de ambiente por stage.
-
-### Epic B — Domínio do jogo
-
-- B1: Modelo Prisma inicial.
-- B2: Engine de resolução de eventos.
-- B3: Sistema de recursos e derrota/vitória.
-- B4: Missões e progressão.
-
-### Epic C — Experiência do usuário
-
-- C1: Login/registro.
-- C2: Dashboard de sessão.
-- C3: Turno interativo.
-- C4: Tela de resultado.
-
-### Epic D — Qualidade e operação
-
-- D1: Testes unitários engine.
-- D2: Integração API.
-- D3: Observabilidade.
-- D4: Hardening segurança.
-
----
-
-## 17) ADRs sugeridos (Architecture Decision Records)
-
-Criar documentos em `docs/adr`:
-
-- ADR-001: Monorepo com `pnpm`.
-- ADR-002: Angular + Express (vs alternativas).
-- ADR-003: Engine separada em package compartilhado.
-- ADR-004: Postgres como alvo de produção.
-- ADR-005: JWT stateless no MVP.
-
----
-
-## 18) Guia de implementação para agente de IA (vibe coding)
-
-### 18.1 Regras de execução
-
-- Sempre iniciar por task pequena, testável e com DoD claro.
-- Nunca alterar múltiplos módulos sem checklist.
-- Antes de editar: mapear impacto (`files`, `tests`, `contracts`).
-- Após editar: rodar lint + testes relevantes.
-
-### 18.2 Template de tarefa para IA
+### 20.2 Template de Task para IA
 
 ```md
-## Task
-[descrição objetiva]
+## Tarefa
+[objetivo claro]
 
 ## Contexto
-[módulo/arquivo/restrições]
+[arquivos, modulo e restricoes]
 
-## Critérios de aceite
-- [ ] critério 1
-- [ ] critério 2
+## Criterios de aceite
+- [ ] criterio 1
+- [ ] criterio 2
+- [ ] criterio 3
 
-## Não fazer
-- [limites claros]
+## Fora de escopo
+- [item 1]
+- [item 2]
 
-## Verificação
-- comando 1
-- comando 2
+## Validacao
+- [comando 1]
+- [comando 2]
 ```
 
-### 18.3 Prompt padrão para feature
+### 20.3 Prompt padrao para feature
 
 ```txt
-Implemente a feature [NOME] no módulo [X] respeitando arquitetura modular.
-Requisitos: [lista].
-Não altere contratos existentes sem versionamento.
-Adicione/atualize testes unitários e de integração necessários.
-Execute lint, typecheck e testes do módulo alterado.
-Retorne: resumo das mudanças, arquivos alterados, riscos e próximos passos.
+Implemente a feature [NOME] no modulo [X] seguindo a arquitetura descrita no CODEX.MD.
+Respeite contratos existentes e adicione testes unitarios/integracao necessarios.
+Retorne: resumo tecnico, arquivos alterados, comandos executados, riscos e proximos passos.
 ```
 
-### 18.4 Prompt padrão para correção de bug
+### 20.4 Prompt padrao para bugfix
 
 ```txt
-Investigue e corrija o bug [ID/Título].
-1) reproduza localmente,
-2) identifique causa raiz,
-3) aplique correção mínima,
-4) adicione teste que falhava antes e passa após fix.
-Não faça refatorações fora do escopo.
+Investigue o bug [ID/Titulo], reproduza localmente, identifique causa raiz,
+aplique correcao minima e adicione teste de regressao.
+Nao faca refatoracoes fora do escopo.
 ```
 
-### 18.5 Política de PR
+### 20.5 Prompt padrao para code review
 
-- PR pequeno (ideal < 400 linhas líquidas).
-- 1 objetivo por PR.
-- Checklist obrigatório de teste e risco.
-- Descrever rollback simples.
-
----
-
-## 19) Convenções de código
-
-- TypeScript strict.
-- Nomes explícitos (sem abreviações ambíguas).
-- Controllers finos, services ricos, engine pura.
-- DTO separado de entidades persistidas.
-- Erros de domínio tipados.
-
-Padrão de commit sugerido:
-
-- `feat(game): add turn resolution service`
-- `fix(api): validate invalid mission transition`
-- `test(engine): cover impact score edge cases`
-
----
-
-## 20) Plano de dados de conteúdo (cartas/eventos)
-
-### 20.1 Categorias de cartas
-
-- SQL
-- ADVPL
-- Configuração
-- Suporte
-- Infraestrutura
-
-### 20.2 Severidade de eventos
-
-- Low
-- Medium
-- High
-- Critical
-
-### 20.3 Exemplo de carta (JSON)
-
-```json
-{
-  "code": "CARD_ADVPL_PATCH",
-  "name": "Customização ADVPL",
-  "category": "ADVPL",
-  "basePower": 50,
-  "riskModifier": 10,
-  "description": "Resolve problema crítico, mas aumenta risco futuro."
-}
+```txt
+Revise as mudancas com foco em regressao funcional, risco de seguranca,
+consistencia de contratos e cobertura de testes.
+Liste findings por severidade, com arquivo e linha.
 ```
 
-### 20.4 Exemplo de evento (JSON)
+## 21. Definicoes operacionais
 
-```json
-{
-  "code": "EVT_DBACCESS_DOWN",
-  "title": "DBAccess caiu",
-  "moduleType": "DATABASE",
-  "severity": "HIGH",
-  "payload": {
-    "deadlineTurns": 2,
-    "possibleActions": ["restart_service", "restart_server", "open_vendor_ticket"]
-  }
-}
-```
+### 21.1 Definition of Ready (DoR)
 
----
+Uma task so inicia quando tiver:
+- objetivo claro
+- escopo limitado
+- criterio de aceite testavel
+- arquivos/modulos alvo identificados
 
-## 21) Estratégia de balanceamento
+### 21.2 Definition of Done (DoD)
 
-- Rodadas de teste com seed fixa para comparabilidade.
-- Ajustar pesos por telemetria interna:
-  - taxa de vitória por dificuldade
-  - taxa de sucesso por categoria de carta
-  - causas mais frequentes de derrota
-- Alvo inicial: 55-65% de win rate no modo normal para usuário iniciante.
+Uma task so encerra quando tiver:
+- implementacao completa
+- testes relevantes passando
+- lint/typecheck ok
+- documentacao minima atualizada
+- risco residual declarado
 
----
+## 22. Backlog inicial priorizado
 
-## 22) Internacionalização e conteúdo
+### Epic A - Plataforma
 
-- Idioma inicial: Português-BR.
-- Estruturar textos para i18n desde início (`pt-BR`, `en-US` futuro).
-- Não hardcode de strings em componentes críticos.
+- A1: bootstrap monorepo.
+- A2: CI baseline.
+- A3: docker compose para api + db.
 
----
+### Epic B - Core game
 
-## 23) Riscos e mitigação
+- B1: modelos Prisma base.
+- B2: engine de impacto e colateral.
+- B3: endpoints de turno e decisao.
 
-- **Risco:** escopo crescer cedo demais.
-  **Mitigação:** travar escopo do MVP por 5 semanas.
-- **Risco:** engine acoplada ao backend.
-  **Mitigação:** package isolada + testes unitários fortes.
-- **Risco:** retrabalho de banco por troca SQLite→Postgres.
-  **Mitigação:** decidir até fim da Fase 1.
-- **Risco:** UX complexa demais no início.
-  **Mitigação:** dashboard simples e funcional.
+### Epic C - UX jogavel
 
----
+- C1: auth e dashboard.
+- C2: modulo de turno.
+- C3: resultado e historico.
 
-## 24) Checklist de pronto para produção (MVP)
+### Epic D - Conteudo
 
-- [ ] Build e testes verdes no CI.
-- [ ] Migrações versionadas e reproduzíveis.
-- [ ] Health checks funcionando.
-- [ ] Logs e erros padronizados.
-- [ ] Métricas mínimas coletadas.
-- [ ] Política de backup/restauração definida.
-- [ ] Documentação de operação em `docs/`.
+- D1: pack inicial de cartas/eventos/missoes.
+- D2: balanceamento por seed.
 
----
+### Epic E - Confiabilidade
 
-## 25) Próximos passos imediatos (ordem recomendada)
+- E1: testes de regressao.
+- E2: observabilidade minima.
+- E3: checklist de release.
 
-1. Criar o novo repositório monorepo com `apps/web` e `apps/api`.
-2. Subir base Angular + Express + Prisma.
-3. Definir banco do MVP (Postgres recomendado).
-4. Implementar `game-engine` com 3 eventos e 5 cartas primeiro.
-5. Integrar UI mínima para ciclo de 1 turno.
-6. Expandir para catálogo completo (20 cartas / 10 eventos).
+## 23. Convencoes de codigo e commits
 
----
+- TypeScript strict sem `any` desnecessario.
+- Controllers finos, services explicitos.
+- Erros de dominio tipados.
+- Commits no padrao Conventional Commits.
 
-## 26) Definição de sucesso do projeto
+Exemplos:
+- `feat(engine): add turn impact calculator`
+- `fix(api): prevent session ownership leak`
+- `test(web): cover turn outcome rendering`
 
-- MVP jogável e estável em browser.
-- Usuário consegue iniciar sessão, jogar turnos e concluir missão.
-- Regras reproduzíveis e testadas.
-- Arquitetura preparada para evolução sem reescrita.
+## 24. Riscos e mitigacoes
 
----
+- Escopo crescer cedo demais.
+  Mitigacao: congelar MVP ate etapa 6.
+- Acoplamento da engine ao backend.
+  Mitigacao: manter engine em package puro + testes.
+- Migracao de banco custosa.
+  Mitigacao: decidir provider final no maximo ate fim da etapa 2.
+- UX confusa.
+  Mitigacao: simplificar telas e medir tempo de decisao por turno.
 
-## 27) Observação de domínio
+## 25. Checklist de release MVP
 
-Este jogo é inspirado em cenários de ERP e troubleshooting corporativo.
-Evitar uso de marcas, assets ou conteúdos protegidos sem autorização formal no material final distribuído.
+- [ ] Build, lint e testes verdes no CI.
+- [ ] Migracoes aplicaveis em ambiente limpo.
+- [ ] Health checks e logs ativos.
+- [ ] Fluxo completo de jogo validado manualmente.
+- [ ] Documentacao de operacao e rollback pronta.
 
----
-
-## 28) Comandos de referência (quando o repo existir)
+## 26. Comandos de referencia
 
 ```bash
 pnpm install
-pnpm -r build
+pnpm -r lint
+pnpm -r typecheck
 pnpm -r test
+pnpm -r build
 pnpm --filter api prisma migrate dev
 pnpm --filter api prisma db seed
-pnpm --filter web start
 pnpm --filter api dev
+pnpm --filter web start
 ```
 
----
+## 27. Proximos passos recomendados agora
 
-## 29) Modo de trabalho recomendado (vibe coding)
+1. Criar o monorepo com estrutura da secao 6.
+2. Subir `apps/api` com auth e Prisma.
+3. Decidir provider inicial (Postgres recomendado).
+4. Implementar primeira versao da engine com 5 cartas e 8 eventos.
+5. Integrar primeiro loop jogavel no Angular.
 
-- Ciclos curtos de 30-90 minutos.
-- Sempre com objetivo único e mensurável.
-- Ao fim de cada ciclo:
-  - atualizar changelog técnico,
-  - registrar decisão arquitetural,
-  - criar próxima task atômica.
-
----
-
-**Fim do documento mestre.**
-Use este arquivo como fonte primária de contexto para agentes de IA, planejamento técnico e execução do roadmap.
+Fim.
